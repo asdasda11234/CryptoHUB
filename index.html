@@ -1,221 +1,31 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>CryptoHUB</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CryptoHUB — Главная</title>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: #0e0e0e;
-      font-family: 'Rajdhani', sans-serif;
-      color: #fff;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    h1 {
-      font-size: 3em;
-      margin: 30px 0 10px;
-    }
-
-    h1 span {
-      color: #ff9900;
-    }
-
-    .layout {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 30px;
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .slogan {
-      width: 20%;
-      font-size: 1.2em;
-      color: #ffcc00;
-      text-align: center;
-      line-height: 1.5em;
-    }
-
-    .converter {
-      background: #1a1a1a;
-      padding: 30px;
-      flex-grow: 1;
-      max-width: 600px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
-    }
-
-    select, input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 1em;
-    }
-
-    button {
-      background: #ffcc00;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #ffaa00;
-    }
-
-    #rate, #result {
-      margin-top: 10px;
-      color: #ccc;
-    }
-
-    .exchange-form {
-      display: none;
-      margin-top: 20px;
-    }
-
-    .support {
-      margin: 40px auto;
-      max-width: 200px;
-    }
-
-    .support button {
-      background: #333;
-      color: #ffcc00;
-      border: 2px solid #ffcc00;
-    }
-
-    .support button:hover {
-      background: #ffcc00;
-      color: #000;
-    }
+    body { font-family: 'Rajdhani', sans-serif; background: #0e0e0e; color: #fff; margin: 0; }
+    nav { background: #111; padding: 15px; text-align: center; }
+    nav a { color: #ffcc00; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    .container { padding: 40px; text-align: center; }
+    h1 span { color: #ff9900; }
   </style>
 </head>
 <body>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="exchange.html">Обмен</a>
+    <a href="rates.html">Курсы</a>
+    <a href="support.html">Поддержка</a>
+  </nav>
 
-  <h1>Crypto<span>HUB</span></h1>
-
-  <div class="layout">
-    <div class="slogan">
-      <p>Технологии будущего<br>уже здесь</p>
-      <p>Безопасный обмен<br>в любое время</p>
-    </div>
-
-    <div class="converter">
-      <input type="number" id="amount" placeholder="Введите сумму" min="0" step="any">
-
-      <select id="from">
-        <option value="bitcoin">BTC</option>
-        <option value="ethereum">ETH</option>
-        <option value="tether">USDT</option>
-        <option value="binancecoin">BNB</option>
-        <option value="litecoin">LTC</option>
-        <option value="solana">SOL</option>
-        <option value="usd">USD</option>
-        <option value="eur">EUR</option>
-        <option value="rub">RUB</option>
-      </select>
-
-      <select id="to">
-        <option value="usd">USD</option>
-        <option value="eur">EUR</option>
-        <option value="rub">RUB</option>
-        <option value="bitcoin">BTC</option>
-        <option value="ethereum">ETH</option>
-        <option value="tether">USDT</option>
-        <option value="binancecoin">BNB</option>
-        <option value="litecoin">LTC</option>
-        <option value="solana">SOL</option>
-      </select>
-
-      <div id="rate">Курс: —</div>
-      <button onclick="convert()">Рассчитать</button>
-      <div id="result"></div>
-
-      <button onclick="toggleForm()">Начать обмен</button>
-
-      <div class="exchange-form" id="exchange-form">
-        <input type="email" placeholder="Ваша почта">
-        <input type="text" placeholder="Адрес кошелька">
-        <input type="text" placeholder="Комментарий (необязательно)">
-        <button onclick="submitExchange()">Отправить заявку</button>
-      </div>
-    </div>
-
-    <div class="slogan">
-      <p>Крипта без границ</p>
-      <p>Мгновенный обмен<br>на лучшие курсы</p>
-    </div>
+  <div class="container">
+    <h1>Добро пожаловать в <span>CryptoHUB</span></h1>
+    <p>Современный обмен криптовалют. Быстро. Надёжно. Выгодно.</p>
+    <p style="margin-top: 40px; font-style: italic; color: #888;">"Технологии меняют деньги — мы меняем правила игры."</p>
   </div>
-
-  <div class="support">
-    <button onclick="alert('Напишите нам в Telegram: @cryptoHUBsupport')">Поддержка</button>
-  </div>
-
-  <script>
-    async function getExchangeRate(from, to) {
-      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data[from] && data[from][to] ? data[from][to] : null;
-      } catch {
-        return null;
-      }
-    }
-
-    async function convert() {
-      const amount = parseFloat(document.getElementById("amount").value);
-      const from = document.getElementById("from").value;
-      const to = document.getElementById("to").value;
-
-      if (!amount || amount <= 0) {
-        document.getElementById("result").innerText = "Введите корректную сумму.";
-        return;
-      }
-
-      let rate;
-      if (from === to) {
-        rate = 1;
-      } else {
-        rate = await getExchangeRate(from, to);
-        if (!rate) {
-          // пробуем обратный курс
-          const reverseRate = await getExchangeRate(to, from);
-          if (reverseRate) rate = 1 / reverseRate;
-        }
-      }
-
-      if (!rate) {
-        document.getElementById("rate").innerText = "Курс недоступен.";
-        document.getElementById("result").innerText = "";
-        return;
-      }
-
-      document.getElementById("rate").innerText = `Курс: 1 ${from.toUpperCase()} = ${rate.toFixed(6)} ${to.toUpperCase()}`;
-      const result = (amount * rate).toFixed(6);
-      document.getElementById("result").innerText = `Вы получите: ${result} ${to.toUpperCase()}`;
-    }
-
-    function toggleForm() {
-      const form = document.getElementById("exchange-form");
-      form.style.display = form.style.display === "block" ? "none" : "block";
-    }
-
-    function submitExchange() {
-      alert("Ваша заявка отправлена! Мы свяжемся с вами по email.");
-    }
-  </script>
-
 </body>
 </html>
