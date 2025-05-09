@@ -1,0 +1,97 @@
+<!-- exchange.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>CryptoHUB — Обмен</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background: #0e0e0e; color: #fff; margin: 0; }
+    nav { background: #111; padding: 15px; text-align: center; }
+    nav a { color: #ffcc00; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    .container { padding: 40px; max-width: 600px; margin: auto; }
+    label, select, input, button { display: block; width: 100%; margin-bottom: 15px; font-size: 18px; padding: 10px; }
+    button { background: #ff9900; border: none; color: #000; cursor: pointer; font-weight: bold; }
+    #result { margin-top: 20px; font-size: 20px; color: #00ffae; }
+    #extraFields { display: none; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="exchange.html">Обмен</a>
+    <a href="rates.html">Курсы</a>
+    <a href="support.html">Поддержка</a>
+  </nav>
+
+  <div class="container">
+    <h2>Обмен криптовалют</h2>
+
+    <label>Отдаю:</label>
+    <select id="fromCurrency">
+      <option value="btc">Bitcoin (BTC)</option>
+      <option value="eth">Ethereum (ETH)</option>
+      <option value="usdt">Tether (USDT)</option>
+      <option value="rub">Российский рубль (RUB)</option>
+      <option value="usd">Доллар США (USD)</option>
+    </select>
+
+    <label>Получаю:</label>
+    <select id="toCurrency">
+      <option value="eth">Ethereum (ETH)</option>
+      <option value="btc">Bitcoin (BTC)</option>
+      <option value="usdt">Tether (USDT)</option>
+      <option value="usd">Доллар США (USD)</option>
+      <option value="rub">Российский рубль (RUB)</option>
+    </select>
+
+    <label>Сумма:</label>
+    <input type="number" id="amount" placeholder="Введите сумму">
+
+    <button onclick="calculateExchange()">Рассчитать</button>
+    <div id="result"></div>
+
+    <button onclick="showExtraFields()">Начать обмен</button>
+
+    <div id="extraFields">
+      <label>Адрес кошелька:</label>
+      <input type="text" placeholder="Введите ваш адрес">
+
+      <label>Email:</label>
+      <input type="email" placeholder="Введите ваш email">
+
+      <label>Комментарий:</label>
+      <input type="text" placeholder="Примечание к обмену (необязательно)">
+
+      <button>Отправить заявку</button>
+    </div>
+  </div>
+
+  <script>
+    async function calculateExchange() {
+      const from = document.getElementById("fromCurrency").value;
+      const to = document.getElementById("toCurrency").value;
+      const amount = parseFloat(document.getElementById("amount").value);
+      if (!amount || amount <= 0) {
+        document.getElementById("result").textContent = "Введите корректную сумму";
+        return;
+      }
+      try {
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const rate = data[from][to];
+        const total = (amount * rate).toFixed(4);
+        document.getElementById("result").textContent = `Вы получите: ${total} ${to.toUpperCase()}`;
+      } catch (e) {
+        document.getElementById("result").textContent = "Ошибка получения курса";
+      }
+    }
+
+    function showExtraFields() {
+      document.getElementById("extraFields").style.display = "block";
+    }
+  </script>
+</body>
+</html>
