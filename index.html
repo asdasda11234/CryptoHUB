@@ -9,14 +9,14 @@
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(to right, #0f0f0f, #1a1a1a);
+      background: #0e0e0e;
       color: #fff;
       text-align: center;
     }
 
     h1 {
       font-size: 3em;
-      margin-top: 30px;
+      margin: 30px 0 10px;
     }
 
     h1 span {
@@ -24,33 +24,32 @@
     }
 
     .badge {
-      background-color: #ffcc00;
+      background: #ffcc00;
       color: #000;
       padding: 6px 12px;
       border-radius: 8px;
       display: inline-block;
-      margin-top: 10px;
-      font-size: 0.9em;
+      margin-bottom: 20px;
       font-weight: bold;
     }
 
     .converter {
-      margin: 40px auto;
-      max-width: 400px;
-      background: #111;
-      padding: 20px;
+      background: #1a1a1a;
+      padding: 30px;
+      max-width: 450px;
+      margin: auto;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 204, 0, 0.2);
+      box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
     }
 
     select, input, button {
-      font-family: inherit;
       width: 100%;
-      margin: 10px 0;
       padding: 12px;
-      font-size: 1em;
-      border-radius: 8px;
+      margin: 10px 0;
       border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 1em;
     }
 
     button {
@@ -64,23 +63,28 @@
       background: #ffaa00;
     }
 
-    #rate {
+    #rate, #result {
       margin-top: 10px;
-      font-size: 1em;
       color: #ccc;
     }
 
-    .donate {
-      margin-top: 30px;
+    .exchange-form {
+      display: none;
+      margin-top: 20px;
     }
 
-    .donate button {
-      background: #222;
+    .support {
+      margin: 40px auto;
+      max-width: 200px;
+    }
+
+    .support button {
+      background: #333;
       color: #ffcc00;
       border: 2px solid #ffcc00;
     }
 
-    .donate button:hover {
+    .support button:hover {
       background: #ffcc00;
       color: #000;
     }
@@ -91,32 +95,55 @@
   <div class="badge">🔥 Обмен за 1 минуту</div>
 
   <div class="converter">
-    <input type="number" id="amount" placeholder="Введите сумму">
+    <input type="number" id="amount" placeholder="Сумма">
     <select id="from">
       <option value="btc">BTC</option>
       <option value="eth">ETH</option>
       <option value="usdt">USDT</option>
+      <option value="bnb">BNB</option>
+      <option value="ltc">LTC</option>
+      <option value="sol">SOL</option>
     </select>
     <select id="to">
-      <option value="rub">RUB</option>
       <option value="usd">USD</option>
       <option value="eur">EUR</option>
+      <option value="rub">RUB</option>
+      <option value="btc">BTC</option>
+      <option value="eth">ETH</option>
     </select>
+
     <div id="rate">Курс: —</div>
     <button onclick="convert()">Рассчитать</button>
     <div id="result"></div>
+    <button onclick="toggleForm()">Начать обмен</button>
+
+    <div class="exchange-form" id="exchange-form">
+      <input type="email" placeholder="Ваша почта">
+      <input type="text" placeholder="Адрес кошелька">
+      <input type="text" placeholder="Комментарий (необязательно)">
+      <button onclick="submitExchange()">Отправить заявку</button>
+    </div>
   </div>
 
-  <div class="donate">
-    <p>Поддержать проект ❤️</p>
-    <button onclick="window.open('https://donate.stream/link', '_blank')">Поддержать</button>
+  <div class="support">
+    <button onclick="alert('Напишите нам в Telegram: @cryptoHUBsupport')">Поддержка</button>
   </div>
 
   <script>
+    const fromSelect = document.getElementById("from");
+    const toSelect = document.getElementById("to");
+
+    fromSelect.addEventListener("change", convert);
+    toSelect.addEventListener("change", convert);
+
     async function getRate(from, to) {
-      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`);
-      const data = await res.json();
-      return data[from][to];
+      try {
+        const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${from}&vs_currencies=${to}`);
+        const data = await res.json();
+        return data[from][to];
+      } catch (e) {
+        return null;
+      }
     }
 
     async function convert() {
@@ -124,15 +151,25 @@
       const from = document.getElementById("from").value;
       const to = document.getElementById("to").value;
 
-      if (!amount || amount <= 0) {
-        document.getElementById("result").innerText = "Введите корректную сумму.";
+      const rate = await getRate(from, to);
+      if (!rate || isNaN(amount)) {
+        document.getElementById("rate").innerText = "Ошибка получения курса.";
+        document.getElementById("result").innerText = "";
         return;
       }
 
-      const rate = await getRate(from, to);
-      const result = (rate * amount).toFixed(2);
       document.getElementById("rate").innerText = `Курс: 1 ${from.toUpperCase()} = ${rate} ${to.toUpperCase()}`;
+      const result = (rate * amount).toFixed(2);
       document.getElementById("result").innerText = `Вы получите: ${result} ${to.toUpperCase()}`;
+    }
+
+    function toggleForm() {
+      const form = document.getElementById("exchange-form");
+      form.style.display = form.style.display === "block" ? "none" : "block";
+    }
+
+    function submitExchange() {
+      alert("Заявка отправлена! Мы свяжемся с вами по почте.");
     }
   </script>
 </body>
