@@ -1,0 +1,70 @@
+<!-- rates.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>CryptoHUB — Курсы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Rajdhani', sans-serif; background: #0e0e0e; color: #fff; margin: 0; }
+    nav { background: #111; padding: 15px; text-align: center; }
+    nav a { color: #ffcc00; margin: 0 15px; text-decoration: none; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    .container { padding: 40px; max-width: 800px; margin: auto; text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #333; padding: 12px; }
+    th { background: #222; }
+    td { background: #1a1a1a; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="exchange.html">Обмен</a>
+    <a href="rates.html">Курсы</a>
+    <a href="support.html">Поддержка</a>
+  </nav>
+
+  <div class="container">
+    <h2>Актуальные курсы валют</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Валюта</th>
+          <th>К USD</th>
+          <th>К RUB</th>
+        </tr>
+      </thead>
+      <tbody id="ratesTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadRates() {
+      const ids = 'bitcoin,ethereum,tether';
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd,rub`);
+      const data = await res.json();
+
+      const rows = [
+        { name: 'Bitcoin (BTC)', key: 'bitcoin' },
+        { name: 'Ethereum (ETH)', key: 'ethereum' },
+        { name: 'Tether (USDT)', key: 'tether' }
+      ];
+
+      const table = document.getElementById("ratesTable");
+      table.innerHTML = '';
+      rows.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${row.name}</td>
+          <td>${data[row.key].usd} USD</td>
+          <td>${data[row.key].rub} RUB</td>
+        `;
+        table.appendChild(tr);
+      });
+    }
+
+    loadRates();
+  </script>
+</body>
+</html>
